@@ -1,7 +1,8 @@
 % !TeX program = pdflatex
-% Титульный лист оформлен по образцу отчёта ЛР1.
+% Титульный лист повторяет структуру и расположение полей из отчёта ЛР1.
 \documentclass[14pt,a4paper,oneside]{extreport}
 \usepackage{gost}
+\usepackage{newtxtext,newtxmath}
 
 \newcommand{\LabNumber}{2}
 \newcommand{\LabTitle}{Сборка образа: Dockerfile, оптимизация, healthcheck и теги}
@@ -29,36 +30,34 @@
   \thispagestyle{empty}
   \begin{center}
     \fontsize{12pt}{16pt}\selectfont
-    Министерство науки и высшего образования Российской Федерации\\[0.25\baselineskip]
+    \textbf{Министерство науки и высшего образования Российской Федерации}\\[0.8\baselineskip]
     ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ\\
-    ВЫСШЕГО ОБРАЗОВАНИЯ\\
-    НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСИТЕТ ИТМО\\
-    ITMO University
+    ВЫСШЕГО ОБРАЗОВАНИЯ\\[0.45\baselineskip]
+    \textbf{НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСИТЕТ ИТМО}\\[0.35\baselineskip]
+    \textbf{ITMO University}
   \end{center}
 
   \vspace{0.8\baselineskip}
-  \begin{center}
-    \textbf{ЛАБОРАТОРНАЯ \LabNumber}
-  \end{center}
-  \vspace{0.4\baselineskip}
+  \noindent\textbf{ЛАБОРАТОРНАЯ \LabNumber}
 
+  \vspace{0.6\baselineskip}
   \begingroup
   \setlength{\parindent}{0pt}
-  По дисциплине \CourseName\par\medskip
-  Тема работы \textit{\LabTitle}\par\medskip
-  Обучающийся \StudentName\par\medskip
-  Факультет \FacultyName\par\medskip
-  Группа \StudentGroup\par\medskip
-  Направление подготовки \DegreeProgramme\par\medskip
-  Образовательная программа \EducationProgramme\par
+  \textbf{По дисциплине} \CourseName\par\medskip
+  \textbf{Тема работы} \textit{\LabTitle}\par\medskip
+  \textbf{Обучающийся} \StudentName\par\medskip
+  \textbf{Факультет}\hspace{1.2cm} \FacultyName\par\medskip
+  \textbf{Группа} \StudentGroup\par\medskip
+  \textbf{Направление подготовки} \DegreeProgramme\par\medskip
+  \textbf{Образовательная программа} \EducationProgramme\par
   \endgroup
 
   \vfill
-  \begin{tabularx}{\textwidth}{@{}l>{\centering\arraybackslash}Xr@{}}
-    Обучающийся & \rule{25mm}{0.4pt} & \StudentShortName\\
-    & {\fontsize{12pt}{14pt}\selectfont (дата) (подпись) \quad (Ф.И.О.)} &\\[0.4\baselineskip]
-    Руководитель & \rule{25mm}{0.4pt} & \TeacherName\\
-    & {\fontsize{12pt}{14pt}\selectfont (дата) (подпись) \quad (Ф.И.О.)} &
+  \begin{tabularx}{\textwidth}{@{}p{32mm}p{30mm}p{18mm}X@{}}
+    \textbf{Обучающийся} & \centering\rule{25mm}{0.4pt} & \centering\rule{15mm}{0.4pt} & \centering\underline{\StudentShortName}\\
+    & \centering{\fontsize{12pt}{14pt}\selectfont (дата)} & \centering{\fontsize{12pt}{14pt}\selectfont (подпись)} & \centering{\fontsize{12pt}{14pt}\selectfont (Ф.И.О.)}\\[0.7\baselineskip]
+    \textbf{Руководитель} & \centering\rule{25mm}{0.4pt} & \centering\rule{15mm}{0.4pt} & \centering\underline{\TeacherName}\\
+    & \centering{\fontsize{12pt}{14pt}\selectfont (дата)} & \centering{\fontsize{12pt}{14pt}\selectfont (подпись)} & \centering{\fontsize{12pt}{14pt}\selectfont (Ф.И.О.)}
   \end{tabularx}
 
   \vfill
