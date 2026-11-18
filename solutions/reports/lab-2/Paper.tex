@@ -187,3 +187,55 @@ Docker-образ FastAPI-приложения. Проверены основн�
   Лабораторная работа №2.
   URL: \url{https://github.com/itmo-faculty-applied-informatics/course-cont-orch-app/blob/main/labs/02-docker-image.md}
   (дата обращения: 18.11.2026).
+
+
+\appendix
+\chapter{Полный текст Dockerfile.optimized}
+
+\begin{code}
+# Оптимизированный образ персонального ассистента
+FROM python:3.11-slim
+
+LABEL maintainer="annin@lab.local"
+LABEL version="2.0"
+
+WORKDIR /app
+
+# Копируем зависимости отдельно: слой переиспользуется при изменении кода
+COPY requirements.txt ./
+# Не сохраняем кеш pip, чтобы уменьшить размер образа
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Исходный код приложения копируется после установки зависимостей
+COPY app/ ./app/
+
+ENV PORT=5448
+EXPOSE \${PORT}
+
+# Устанавливаем curl для проверки HTTP-эндпоинта /health
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Проверяем готовность приложения каждые 30 секунд
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:\${PORT}/health || exit 1
+
+CMD uvicorn app.main:app --host 0.0.0.0 --port \${PORT}
+\end{code}
+
+\chapter{Содержимое .dockerignore}
+
+\begin{code}
+__pycache__/
+*.pyc
+*.pyo
+.git
+.gitignore
+.venv/
+venv/
+.env
+*.log
+Dockerfile*
+README.md
+\end{code}
