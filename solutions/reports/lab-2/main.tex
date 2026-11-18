@@ -1,0 +1,73 @@
+% !TeX program = pdflatex
+% Титульный лист оформлен по образцу отчёта ЛР1.
+\documentclass[14pt,a4paper,oneside]{extreport}
+\usepackage{gost}
+
+\newcommand{\LabNumber}{2}
+\newcommand{\LabTitle}{Сборка образа: Dockerfile, оптимизация, healthcheck и теги}
+\newcommand{\CourseName}{Контейнеризация и оркестрация приложений}
+\newcommand{\StudentName}{Аннин Макар Дмитриевич}
+\newcommand{\StudentShortName}{Аннин М.\,Д.}
+\newcommand{\StudentISU}{465018}
+\newcommand{\StudentGroup}{К3320}
+\newcommand{\FacultyName}{Прикладной информатики}
+\newcommand{\DegreeProgramme}{11.03.02 Инфокоммуникационные технологии и системы связи}
+\newcommand{\EducationProgramme}{Программирование в инфокоммуникационных системах}
+\newcommand{\TeacherName}{Аминов Н.\,С.}
+\newcommand{\ReportCity}{Санкт-Петербург}
+\newcommand{\ReportYear}{2026}
+\newcommand{\RepositoryURL}{https://github.com/VAPPROSS2/course-cont-orch-app/tree/lab-2}
+
+\hypersetup{
+  pdftitle={Лабораторная работа №2 — Аннин Макар Дмитриевич},
+  pdfauthor={Аннин Макар Дмитриевич},
+  pdfsubject={Контейнеризация и оркестрация приложений}
+}
+
+\begin{document}
+\begin{titlepage}
+  \thispagestyle{empty}
+  \begin{center}
+    \fontsize{12pt}{16pt}\selectfont
+    Министерство науки и высшего образования Российской Федерации\\[0.25\baselineskip]
+    ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ\\
+    ВЫСШЕГО ОБРАЗОВАНИЯ\\
+    НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСИТЕТ ИТМО\\
+    ITMO University
+  \end{center}
+
+  \vspace{0.8\baselineskip}
+  \begin{center}
+    \textbf{ЛАБОРАТОРНАЯ \LabNumber}
+  \end{center}
+  \vspace{0.4\baselineskip}
+
+  \begingroup
+  \setlength{\parindent}{0pt}
+  По дисциплине \CourseName\par\medskip
+  Тема работы \textit{\LabTitle}\par\medskip
+  Обучающийся \StudentName\par\medskip
+  Факультет \FacultyName\par\medskip
+  Группа \StudentGroup\par\medskip
+  Направление подготовки \DegreeProgramme\par\medskip
+  Образовательная программа \EducationProgramme\par
+  \endgroup
+
+  \vfill
+  \begin{tabularx}{\textwidth}{@{}l>{\centering\arraybackslash}Xr@{}}
+    Обучающийся & \rule{25mm}{0.4pt} & \StudentShortName\\
+    & {\fontsize{12pt}{14pt}\selectfont (дата) (подпись) \quad (Ф.И.О.)} &\\[0.4\baselineskip]
+    Руководитель & \rule{25mm}{0.4pt} & \TeacherName\\
+    & {\fontsize{12pt}{14pt}\selectfont (дата) (подпись) \quad (Ф.И.О.)} &
+  \end{tabularx}
+
+  \vfill
+  \begin{center}
+    \ReportCity\ \ReportYear
+  \end{center}
+\end{titlepage}
+
+\setcounter{page}{2}
+\tableofcontents
+\input{Paper}
+\end{document}
