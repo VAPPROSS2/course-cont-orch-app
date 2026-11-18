@@ -8,6 +8,14 @@
 
 ## Сборка и запуск
 
+Перед запуском задайте персональный секрет в переменной окружения текущего терминала (не записывайте его в репозиторий):
+
+```bash
+export APP_SECRET='ваш_персональный_секрет'
+```
+
+Затем выполните:
+
 ```bash
 docker build -t annin-assistant:v1 .
 docker run -d \
@@ -16,12 +24,6 @@ docker run -d \
   -e APP_OWNER=annin \
   -e APP_SECRET="$APP_SECRET" \
   annin-assistant:v1
-```
-
-Перед запуском задайте секрет в переменной окружения текущего терминала:
-
-```bash
-export APP_SECRET='secret18annin'
 ```
 
 Не сохраняйте секрет в репозитории и не добавляйте файл `.env` в Git.
@@ -43,7 +45,7 @@ curl -X POST http://localhost:5448/notes \
   -H "Content-Type: application/json" \
   -d '{"text":"ЛР2: сборка образа"}'
 curl http://localhost:5448/notes
-curl http://localhost:5448/secret/secret18annin
+curl "http://localhost:5448/secret/$APP_SECRET"
 ```
 
 Проверка готовности приложения:
