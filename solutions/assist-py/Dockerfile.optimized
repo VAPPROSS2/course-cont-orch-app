@@ -17,4 +17,13 @@ COPY app/ ./app/
 ENV PORT=5448
 EXPOSE ${PORT}
 
+# Устанавливаем curl для проверки доступности HTTP-эндпоинта /health
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Проверяем готовность приложения каждые 30 секунд
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+
 CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
