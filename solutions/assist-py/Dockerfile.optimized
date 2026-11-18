@@ -1,0 +1,20 @@
+# Оптимизированный образ персонального ассистента
+FROM python:3.11-slim
+
+LABEL maintainer="annin@lab.local"
+LABEL version="2.0"
+
+WORKDIR /app
+
+# Копируем зависимости отдельно: слой переиспользуется при изменении кода
+COPY requirements.txt ./
+# Не сохраняем кеш pip, чтобы уменьшить размер образа
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Исходный код копируется после установки зависимостей
+COPY app/ ./app/
+
+ENV PORT=5448
+EXPOSE ${PORT}
+
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
