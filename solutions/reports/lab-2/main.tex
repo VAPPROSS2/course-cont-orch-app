@@ -2,7 +2,7 @@
 % Титульный лист повторяет структуру и расположение полей из отчёта ЛР1.
 \documentclass[14pt,a4paper,oneside]{extreport}
 \usepackage{gost}
-\usepackage{newtxtext,newtxmath}
+\usepackage{tempora}
 
 \newcommand{\LabNumber}{2}
 \newcommand{\LabTitle}{Сборка образа: Dockerfile, оптимизация, healthcheck и теги}
@@ -42,6 +42,7 @@
 
   \vspace{0.6\baselineskip}
   \begingroup
+  \fontsize{12pt}{16pt}\selectfont
   \setlength{\parindent}{0pt}
   \textbf{По дисциплине} \CourseName\par\medskip
   \textbf{Тема работы} \textit{\LabTitle}\par\medskip
@@ -53,15 +54,16 @@
   \endgroup
 
   \vfill
-  \begin{tabularx}{\textwidth}{@{}p{32mm}p{30mm}p{18mm}X@{}}
-    \textbf{Обучающийся} & \centering\rule{25mm}{0.4pt} & \centering\rule{15mm}{0.4pt} & \centering\underline{\StudentShortName}\\
-    & \centering{\fontsize{12pt}{14pt}\selectfont (дата)} & \centering{\fontsize{12pt}{14pt}\selectfont (подпись)} & \centering{\fontsize{12pt}{14pt}\selectfont (Ф.И.О.)}\\[0.7\baselineskip]
-    \textbf{Руководитель} & \centering\rule{25mm}{0.4pt} & \centering\rule{15mm}{0.4pt} & \centering\underline{\TeacherName}\\
-    & \centering{\fontsize{12pt}{14pt}\selectfont (дата)} & \centering{\fontsize{12pt}{14pt}\selectfont (подпись)} & \centering{\fontsize{12pt}{14pt}\selectfont (Ф.И.О.)}
+  \begin{tabularx}{\textwidth}{@{}p{32mm}>{\centering\arraybackslash}p{30mm}>{\centering\arraybackslash}p{18mm}>{\centering\arraybackslash}X@{}}
+    \textbf{Обучающийся} & \rule{25mm}{0.4pt} & \rule{15mm}{0.4pt} & \underline{\StudentShortName}\\
+    & {\fontsize{12pt}{14pt}\selectfont (дата)} & {\fontsize{12pt}{14pt}\selectfont (подпись)} & {\fontsize{12pt}{14pt}\selectfont (Ф.И.О.)}\\[0.7\baselineskip]
+    \textbf{Руководитель} & \rule{25mm}{0.4pt} & \rule{15mm}{0.4pt} & \underline{\TeacherName}\\
+    & {\fontsize{12pt}{14pt}\selectfont (дата)} & {\fontsize{12pt}{14pt}\selectfont (подпись)} & {\fontsize{12pt}{14pt}\selectfont (Ф.И.О.)}
   \end{tabularx}
 
   \vfill
   \begin{center}
+    \fontsize{12pt}{16pt}\selectfont
     \ReportCity\ \ReportYear
   \end{center}
 \end{titlepage}
