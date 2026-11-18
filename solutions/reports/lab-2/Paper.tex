@@ -1,0 +1,189 @@
+% Отчёт по лабораторной работе №2.
+\reportelement{Введение}
+
+Цель лабораторной работы — освоить создание собственного Docker-образа
+приложения, оптимизацию сборки, исключение лишних файлов из контекста
+сборки, настройку проверки работоспособности контейнера и тегирование
+готового образа.
+
+В работе использовались Git, Docker Engine 28.5.2 и Debian GNU/Linux 13
+в среде WSL2. Приложение реализовано на FastAPI и запускается через Uvicorn.
+
+\begin{table}[H]
+  \caption{Персональные параметры}\label{tab:parameters}
+  \centering
+  \begin{tabularx}{\textwidth}{|p{0.46\textwidth}|X|}
+    \hline
+    Параметр & Значение\\ \hline
+    ФИО & Аннин Макар Дмитриевич\\ \hline
+    Номер ИСУ & 465018\\ \hline
+    Персональный порт & 5448\\ \hline
+    Персональный префикс & \texttt{annin}\\ \hline
+    Секретный ключ & \texttt{secret18annin}\\ \hline
+    Группа & К3320\\ \hline
+    Операционная система & Debian GNU/Linux 13 (WSL2)\\ \hline
+    Архитектура & x86\_64\\ \hline
+    Docker Engine & 28.5.2\\ \hline
+    Git & 2.47.3\\ \hline
+  \end{tabularx}
+\end{table}
+
+Исходный код и конфигурация работы размещены в публичном форке курса,
+в ветке \texttt{lab-2}:
+\url{https://github.com/VAPPROSS2/course-cont-orch-app/tree/lab-2}.
+
+\chapter{Ход выполнения}
+
+\section{Этап 1. Первый рабочий образ}
+
+Для приложения был подготовлен Dockerfile на основе
+\texttt{python:3.11-slim}. В нём заданы метаданные автора, рабочая
+директория \texttt{/app}, переменная окружения \texttt{PORT=5448},
+установка зависимостей и команда запуска Uvicorn.
+
+Образ был собран командой:
+
+\begin{code}
+docker build -t annin-assistant:v1 .
+\end{code}
+
+Сборка завершилась успешно. В результате создан образ
+\texttt{annin-assistant:v1}. Время первой сборки составило около
+58,9 секунды. При сборке Docker вывел предупреждение
+\texttt{JSONArgsRecommended}, относящееся к shell-форме команды CMD;
+оно не помешало запуску приложения.
+
+\reportscreenshot{images/step-01-build.png}{Успешная сборка первого Docker-образа}{fig:first-build}
+
+Контейнер был запущен с публикацией порта 5448 и персональными
+переменными окружения:
+
+\begin{code}
+docker run -d --name annin-assistant-lab2 \
+  -p 5448:5448 \
+  -e APP_OWNER=annin \
+  -e APP_SECRET="$APP_SECRET" \
+  annin-assistant:v1
+\end{code}
+
+Проверка главной страницы вернула приветствие для владельца
+\texttt{annin}. Запрос \texttt{/me} вернул владельца и префикс секрета.
+Запрос к \texttt{/secret/secret18annin} вернул флаг
+\texttt{LAB2\_SUCCESS\_ANNIN}. Для проверки заметок была создана запись,
+после чего GET-запрос вернул список заметок с количеством записей.
+
+\reportscreenshot{images/step-01-root-secret.png}{Проверка главной страницы и секретного эндпоинта}{fig:root-secret}
+\reportscreenshot{images/step-01-me.png}{Проверка персональных переменных окружения}{fig:me}
+\reportscreenshot{images/step-01-notes.png}{Создание и получение заметок}{fig:notes}
+
+\section{Этап 2. Оптимизация Docker-образа}
+
+В файл \texttt{Dockerfile.optimized} добавлено отдельное копирование
+\texttt{requirements.txt} до копирования исходного кода. Благодаря этому
+слой установки зависимостей может повторно использоваться из кеша,
+если изменяется только код приложения. Для установки пакетов применён
+параметр \texttt{--no-cache-dir}, исключающий сохранение кеша pip в образе.
+
+После сборки были получены следующие размеры:
+
+\begin{table}[H]
+  \caption{Сравнение размеров образов}\label{tab:image-sizes}
+  \centering
+  \begin{tabularx}{\textwidth}{|X|r|}
+    \hline
+    Образ & Размер\\ \hline
+    \texttt{annin-assistant:v1} & 188 MB\\ \hline
+    \texttt{annin-assistant:v2} & 175 MB\\ \hline
+  \end{tabularx}
+\end{table}
+
+Оптимизированный образ оказался меньше на 13 MB, что составляет
+примерно 6,9\% от первоначального размера.
+
+\reportscreenshot{images/step-02-compare.png}{Сравнение размеров образов v1 и v2}{fig:compare}
+
+\section{Этап 3. Исключение лишних файлов с помощью .dockerignore}
+
+Создан файл \texttt{.dockerignore}, исключающий кеш Python, каталоги
+виртуальных окружений, Git-метаданные, файл \texttt{.env}, логи,
+Dockerfile и README из контекста сборки.
+
+После добавления файла образ \texttt{annin-assistant:v3} был собран
+повторно. Его размер составил 188 MB. В данном проекте размер совпал
+с v1, поскольку Dockerfile копирует только \texttt{requirements.txt}
+и каталог \texttt{app/}; исключённые файлы и ранее не попадали в
+финальные слои образа.
+
+Наличие каталога \texttt{.git} в контексте сборки нежелательно:
+история репозитория может содержать удалённые файлы, конфигурации
+или случайно сохранённые секреты. Исключение \texttt{.git} снижает
+риск попадания такой информации в образ.
+
+\reportscreenshot{images/step-03-dockerignore.png}{Образы v1, v2 и v3 после добавления .dockerignore}{fig:dockerignore}
+
+\section{Этап 4. Настройка Healthcheck}
+
+В \texttt{Dockerfile.optimized} добавлена установка утилиты curl
+и инструкция HEALTHCHECK. Проверка выполняется обращением к
+\texttt{http://localhost:\${PORT}/health} с заданными интервалом,
+таймаутом, периодом запуска и числом повторных попыток.
+
+Финальный образ собран командой:
+
+\begin{code}
+docker build -t annin-assistant:final -f Dockerfile.optimized .
+\end{code}
+
+После запуска контейнера \texttt{annin-assistant-final} и ожидания
+инициализации команда \texttt{docker ps} показала статус
+\texttt{Up (healthy)}. Это подтверждает, что Docker успешно выполняет
+проверку эндпоинта здоровья приложения.
+
+\reportscreenshot{images/step-04-health.png}{Статус финального контейнера healthy}{fig:health}
+
+\section{Этап 5. Тегирование и финальный артефакт}
+
+Финальному образу назначены дополнительные теги версии и даты сборки:
+
+\begin{code}
+docker tag annin-assistant:final annin-assistant:1.0.0
+docker tag annin-assistant:final annin-assistant:$(date +%Y%m%d)
+\end{code}
+
+В результате созданы теги \texttt{final}, \texttt{1.0.0} и
+\texttt{20261118}. Дополнительно сохранены образы \texttt{v1},
+\texttt{v2} и \texttt{v3}.
+
+Финальная команда вывела дату и время сборки, имя пользователя и
+хоста, а также список тегов с размерами образов. В окружении выполнения
+получено значение \texttt{Makar@HOME-PC}. Размер финального образа
+с установленным curl составил 189 MB.
+
+\reportscreenshot{images/step-05-artifact.png}{Финальный артефакт: дата, пользователь, хост, теги и размеры}{fig:artifact}
+
+\reportelement{Заключение}
+
+В ходе лабораторной работы был создан и запущен персонализированный
+Docker-образ FastAPI-приложения. Проверены основные HTTP-эндпоинты,
+переменные окружения и секретный эндпоинт. Оптимизация установки
+зависимостей уменьшила размер образа с 188 MB до 175 MB. Добавлен
+\texttt{.dockerignore}, настроен Healthcheck, подтверждён статус
+контейнера \texttt{healthy}. Финальному образу назначены семантический
+тег и тег с датой сборки.
+
+Поставленная цель достигнута: процесс сборки, оптимизации, проверки
+работоспособности и тегирования Docker-образа выполнен.
+
+\reportelement{Список использованных источников}
+
+\begin{enumerate}
+  \item Docker Documentation. Dockerfile reference.
+  URL: \url{https://docs.docker.com/reference/dockerfile/}
+  (дата обращения: 18.11.2026).
+  \item Docker Documentation. Build context and .dockerignore.
+  URL: \url{https://docs.docker.com/build/concepts/context/}
+  (дата обращения: 18.11.2026).
+  \item Учебный репозиторий курса «Контейнеризация и оркестрация приложений».
+  Лабораторная работа №2.
+  URL: \url{https://github.com/itmo-faculty-applied-informatics/course-cont-orch-app/blob/main/labs/02-docker-image.md}
+  (дата обращения: 18.11.2026).
